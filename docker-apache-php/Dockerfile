@@ -35,6 +35,10 @@ ADD php/php.ini /usr/local/etc/php/php.ini
 RUN curl -sS https://getcomposer.org/installer | php \
     && mv composer.phar /usr/bin/composer
 
+# Install n98 magerun
+RUN wget https://files.magerun.net/n98-magerun.phar \
+    && mv n98-magerun.phar /usr/bin/n98
+
 RUN chown -R www-data:www-data /var/www/
 
 CMD ["/run.sh"]
