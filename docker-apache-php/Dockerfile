@@ -22,7 +22,14 @@ RUN docker-php-ext-install \
         xsl \
         zip \
         soap \
-        bcmath
+        bcmath \
+     && pecl install xdebug && docker-php-ext-enable xdebug \
+     && echo "xdebug.remote_enable=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+     && echo "xdebug.remote_port=9000" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+     && echo "xdebug.remote_connect_back=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+     && echo "xdebug.idekey=PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+     && echo "xdebug.max_nesting_level=1000" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+     && chmod 666 /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 # Apache & PHP configuration
 RUN a2enmod rewrite
@@ -36,7 +43,7 @@ RUN curl -sS https://getcomposer.org/installer | php \
     && mv composer.phar /usr/bin/composer
 
 # Install n98 magerun
-RUN wget https://files.magerun.net/n98-magerun.phar \
+RUN curl -O https://files.magerun.net/n98-magerun.phar \
     && mv n98-magerun.phar /usr/bin/n98
 
 RUN chown -R www-data:www-data /var/www/
