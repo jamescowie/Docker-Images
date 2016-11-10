@@ -8,7 +8,9 @@ RUN apt-get update && apt-get install -y \
         libjpeg62-turbo-dev \
         libmcrypt-dev \
         libpng12-dev \
-        libxslt1-dev
+        libxslt1-dev \
+        supervisor \
+        openssh-server
 
 RUN docker-php-ext-configure \
         gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
@@ -29,7 +31,18 @@ RUN docker-php-ext-install \
      && echo "xdebug.remote_connect_back=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
      && echo "xdebug.idekey=PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
      && echo "xdebug.max_nesting_level=1000" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
-     && chmod 666 /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+     && chmod 666 /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+     && mkdir /var/run/sshd \
+     && echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config \
+     && useradd -m -d /home/magento2 magento2 && adduser magento2 sudo \
+     && mkdir /home/magento2/magento2
+
+# SSHD Config used for Xdebug
+COPY conf/sshd_config /etc/ssh/sshd_config
+RUN chown magento2:magento2 /etc/ssh/ssh_config
+
+# supervisord config
+ADD conf/supervisord.conf /etc/supervisord.conf
 
 # Apache & PHP configuration
 RUN a2enmod rewrite
