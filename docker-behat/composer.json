@@ -1,0 +1,8 @@
+{
+  "config": {
+    "bin-dir": "bin/"
+  },
+  "require": {
+    "emuse/behat-html-formatter": "0.1.*"
+  }
+}
